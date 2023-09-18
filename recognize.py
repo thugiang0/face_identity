@@ -44,66 +44,68 @@ def draw_face_box(image):
 
 # def recognize(image):
 
+def update_database(update):
+    if update:
+        print("facebank update")
+        targets, names = prepare_facebank(cfg, learner.model, mtcnn, tta=False)
+    else:
+        print("faceback loaded")
+        targets, names = load_facebank(cfg)
 
-def recognize_face(frame, update=False):
+    return targets, names
+    
+def recognize_face(frame, targets, names):
 
     result = []
 
-    if update:
-        targets, names = prepare_facebank(cfg, learner.model, mtcnn, tta=False)
-        print('facebank updated')
+    image = Image.fromarray(frame)
+
+    bboxes, scores, landmarks = detect_image(frame)
+
+    if bboxes is None:
+        s = "No detection"
+        return s, frame
+    
     else:
-        print("No update")
-        targets, names = load_facebank(cfg)
-        print('facebank loaded')
 
-        try:
+        bboxes = bboxes.astype(np.float64)
+        bboxes = bboxes.astype(int)
 
-            image = Image.fromarray(frame)
+        landmarks = np.hstack((landmarks[:, :, 0], landmarks[:, :, 1]))
 
-            bboxes, scores, landmarks = detect_image(frame)
+        faces = []
+        refrence = get_reference_facial_points(default_square= True)
+        for landmark in landmarks:
+            facial5points = [[landmark[j],landmark[j+5]] for j in range(5)]
+            warped_face = warp_and_crop_face(np.array(image), facial5points, refrence, crop_size=(112,112))
+            faces.append(Image.fromarray(warped_face))
+
+        results, _ = learner.infer(cfg, faces, targets, tta=False)
         
-            bboxes = bboxes.astype(np.float64)
-            bboxes = bboxes.astype(int)
+        labels_box = []
 
-            landmarks = np.hstack((landmarks[:, :, 0], landmarks[:, :, 1]))
+        for idx, (bbox, score) in enumerate(zip(bboxes, scores)):
 
-            faces = []
-            refrence = get_reference_facial_points(default_square= True)
-            for landmark in landmarks:
-                facial5points = [[landmark[j],landmark[j+5]] for j in range(5)]
-                warped_face = warp_and_crop_face(np.array(image), facial5points, refrence, crop_size=(112,112))
-                faces.append(Image.fromarray(warped_face))
+            name_id = names[results[idx] + 1]
+            bbox = bbox.tolist()
 
-            results, _ = learner.infer(cfg, faces, targets, tta=False)
-            
-            labels_box = []
+            face_id = {
+                "bbox": bbox,
+                "score": score,
+                "name": name_id
+            }
 
-            for idx, (bbox, score) in enumerate(zip(bboxes, scores)):
-
-                name_id = names[results[idx] + 1]
-                bbox = bbox.tolist()
-
-                face_id = {
-                    "bbox": bbox,
-                    "score": score,
-                    "name": name_id
-                }
-
-                result.append(face_id)
+            result.append(face_id)
 
 
-                frame = draw_box_name(bbox, names[results[idx] + 1], frame)
+            frame = draw_box_name(bbox, names[results[idx] + 1], frame)
 
-                labels_box.append(names[results[idx] + 1])
+            labels_box.append(names[results[idx] + 1])
 
-        except:
-            print("no detection")
 
         face_result = json.dumps(result, indent=4)
-  
 
-    return face_result, frame
+        return face_result, frame
 
-    
-    
+
+

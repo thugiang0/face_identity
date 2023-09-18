@@ -18,11 +18,10 @@ mtcnn = MTCNN()
 
 def align(img):
     bboxes, scores, landmarks = mtcnn.detect(img, landmarks=True)
-    
-    print("img: ", type(img))
-    print(len(landmarks))
+    landmarks = np.hstack((landmarks[:, :, 0], landmarks[:, :, 1]))
+    refrence = get_reference_facial_points(default_square= True)
     facial5points = [[landmarks[0][j],landmarks[0][j+5]] for j in range(5)]
-    warped_face = warp_and_crop_face(np.array(img), facial5points, self.refrence, crop_size=(112,112))
+    warped_face = warp_and_crop_face(np.array(img), facial5points, refrence, crop_size=(112,112))
     return Image.fromarray(warped_face)
 
 
