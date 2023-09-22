@@ -21,11 +21,16 @@
 - Inference
     + Face Recognition with Insightface
     ```
-    python test.py
+    python test_insightface.py
     ```
 
     + Face Recognition with Facenet
     ```
     python test_facenet.py
+    ```
+
+- Demo 
+    ```
+    streamlit run app.py
     ```
     
