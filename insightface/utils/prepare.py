@@ -47,7 +47,7 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
     embeddings =  []
     names = ['Unknown']
     for path in conf.facebank_path.iterdir():
-        print("PATH: ", path)
+        print("PATH: ", type(path))
         if path.is_file():
             continue
         else:
@@ -75,13 +75,58 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
             continue
         embedding = torch.cat(embs).mean(0,keepdim=True)
         embeddings.append(embedding)
+        
         names.append(path.name)
-    embeddings = torch.cat(embeddings)
-    names = np.array(names)
   
+    embeddings = torch.cat(embeddings)
+ 
+
+    names = np.array(names)
+    print(names)
+    
     torch.save(embeddings, conf.facebank_path/'facebank.pth')
     np.save(conf.facebank_path/'names', names)
+    
     return embeddings, names
+
+def add_facebank(conf, model, path, tta=True):
+    embeddings = torch.load(conf.facebank_path/'facebank.pth', map_location="cpu")
+    print("emb0: ", embeddings)
+    embeddings = [embeddings[i:i + 512] for i in range(0, len(embeddings), 512)]
+ 
+    
+    names = np.load(conf.facebank_path/'names.npy')
+    names = names.tolist()
+    print("name 0", names)
+    embs = []
+    for file in path.iterdir():
+        if not file.is_file():
+            continue
+        else:
+            try:
+                img = Image.open(file)
+            except:
+                continue
+            if img.size != (112, 112):
+                img = align(img)
+            with torch.no_grad():
+                if tta:
+                    mirror = trans.functional.hflip(img)
+                    emb = model(conf.test_transform(img).to(conf.device).unsqueeze(0))
+                    emb_mirror = model(conf.test_transform(mirror).to(conf.device).unsqueeze(0))
+                    embs.append(l2_norm(emb + emb_mirror))
+                else:                        
+                    embs.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
+    embedding = torch.cat(embs).mean(0,keepdim=True)
+    embeddings.append(embedding)
+    # print(embeddings)
+    names.append(path.name)
+    embeddings = torch.cat(embeddings)
+    names = np.array(names)
+    print("name1", names)
+    torch.save(embeddings, conf.facebank_path/'facebank.pth')
+    np.save(conf.facebank_path/'names', names)
+
 
 def load_facebank(conf):
     embeddings = torch.load(conf.facebank_path/'facebank.pth', map_location="cpu")

@@ -11,8 +11,6 @@ from insightface.utils.prepare import load_facebank, draw_box_name, prepare_face
 from mtcnn_model.utils.align_trans import get_reference_facial_points, warp_and_crop_face
 
 
-
-
 cfg = get_config(False)
 
 mtcnn = MTCNN()
@@ -89,7 +87,10 @@ def recognize_face(frame, targets, names):
             name_id = names[results[idx] + 1]
             bbox = bbox.tolist()
 
+            face = frame[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+       
             face_id = {
+                "face": face.tolist(),
                 "bbox": bbox,
                 "score": score,
                 "name": name_id
@@ -97,13 +98,13 @@ def recognize_face(frame, targets, names):
 
             result.append(face_id)
 
-
             frame = draw_box_name(bbox, names[results[idx] + 1], frame)
 
             labels_box.append(names[results[idx] + 1])
 
 
         face_result = json.dumps(result, indent=4)
+        # print(face_result)
 
         return face_result, frame
 
