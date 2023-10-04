@@ -73,33 +73,35 @@ class faceDetectionRecognition:
             except:
                 print('pt file has not valid content')
 
-    def addFaces(self, path, name):
+    def addFaces(self, name):
         """
         adding new face encode to encodes
         :param path: {str} -> path of a directory contains new face images
         :param name: {str} -> name of new face
         :return: None
         """
-        if name not in self.names:
+        # if name not in self.names:
             # create a directory for new person and copy images to it
-            os.mkdir(f'{self.person_dir}/{name}')
-            for img_name in os.listdir(path):
-                src = os.path.join(path, img_name)
-                dst = os.path.join(self.person_dir, name, img_name)
-                shutil.copy(src, dst)
+            # os.mkdir(f'{self.person_dir}/{name}')
+        # for img_name in os.listdir(path):
+        #     src = os.path.join(path, img_name)
+        #     dst = os.path.join(self.person_dir, name, img_name)
+        #     shutil.copy(src, dst)
 
-            encoding_dict = torch.load(self.encode_dir)
-            encodes = []
-            for img_path in glob(f'{self.person_dir}/{name}/*'):
-                save_name = img_path.split('/')[-1]
-                encode, img_cropped = self.encoder(img_path, name, save_name)
-                encodes.append(encode)
-                mean_encode = torch.mean(torch.vstack(encodes), dim=0)
-                encoding_dict[name] = mean_encode
-            torch.save(encoding_dict, 'data.pt')
-            print(f"The {name}'s face added!")
-        else:
-            print(f"The {name}'s face exists!")
+        encoding_dict = torch.load(self.encode_dir)
+        encodes = []
+        print(glob(f'{self.person_dir}/{name}/*'))
+        for img_path in glob(f'{self.person_dir}/{name}/*'):
+            save_name = img_path.split('/')[-1]
+            encode, img_cropped = self.encoder(img_path, name, save_name)
+            encodes.append(encode)
+            mean_encode = torch.mean(torch.vstack(encodes), dim=0)
+            encoding_dict[name] = mean_encode
+        torch.save(encoding_dict, 'data.pt')
+        print(encoding_dict)
+        print(f"The {name}'s face added!")
+        # else:
+        #     print(f"The {name}'s face exists!")
 
     def predict(self, img, encoding_dict, landmarks=False):
         """

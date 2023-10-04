@@ -8,18 +8,16 @@ from update import add_to_database
 import json
 
 
-
 default_img = "default.jpg"
 
 st.title("Face Recognition")
 
 st.sidebar.title("Menu")
-st.sidebar.subheader("Detection")
-
-st.sidebar.subheader("Take picture")
-
 
 st.sidebar.markdown("----")
+
+# insightface or facenet
+select_recognition = st.sidebar.selectbox("Choose", ["Insightface", "Facenet"])
 
 # Add face to database
 
@@ -38,7 +36,6 @@ name_person = st.sidebar.text_input("Input name")
 if st.sidebar.button("Update"):
     if img_file_add is not None and name_person:
         
-
         save_folder = os.path.join("face_database/facebank/", name_person)
         if name_person not in os.listdir("face_database/facebank/"):
             os.makedirs(save_folder, exist_ok=True)
