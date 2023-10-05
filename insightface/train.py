@@ -1,4 +1,4 @@
-from config import get_config
+from configs.config import get_config
 from Learner import face_learner
 import argparse
 

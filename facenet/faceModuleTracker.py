@@ -10,6 +10,11 @@ import torch
 from .detection import Detections
 from mtcnn_model.mtcnn import MTCNN
 from .inception_resnet_v1 import InceptionResnetV1
+import yaml
+
+with open('configs/config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+
 
 
 class faceDetectionRecognition:
@@ -27,7 +32,7 @@ class faceDetectionRecognition:
         :param encode_dir: {str} -> a directory to save or load face encoded data
         :param pretrained: {str} -> 'vggface2' 107Mb or 'casia-webface' 111Mb
     """
-    def __init__(self, person_dir, faces_dir, encode_dir=None, pretrained='vggface2'):
+    def __init__(self, person_dir, faces_dir, encode_dir=None, pretrained='vggface2', conf_thresh=config['face_recognition']['facenet']["threshold"]):
         self.person_dir = person_dir
         self.names = os.listdir(self.person_dir)
         self.faces_dir = faces_dir
@@ -35,6 +40,7 @@ class faceDetectionRecognition:
 
         self.face_detector = MTCNN(image_size=160, margin=0.1, thresholds=[0.6, 0.7, 0.85], keep_all=True)
         self.face_encoder = InceptionResnetV1(pretrained=pretrained).eval()
+        self.conf_thresh = conf_thresh
 
     def build_face_storage(self):
         """
@@ -136,7 +142,7 @@ class faceDetectionRecognition:
         outputs = self.face_detector.detect(img, landmarks)
         return Detections(img, comps, outputs, landmarks)
 
-    def compare(self, img, encoding_dict, conf_thresh=161.8):
+    def compare(self, img, encoding_dict):
         """
         comparison of new image encode and encoding_dict and choose one person
         if it is close
@@ -148,6 +154,7 @@ class faceDetectionRecognition:
             cropped face of predicted name
         """
         crops = self.face_detector(img)
+        conf_thresh = self.conf_thresh
   
         if crops is not None:
             self.face_encoder.classify = True

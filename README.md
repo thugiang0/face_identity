@@ -18,16 +18,13 @@
     pip -r install requirements.txt
     ```
 
-- Inference
-    + Face Recognition with Insightface
+- Test
+
     ```
-    python test_insightface.py
+    python main_test.py
     ```
 
-    + Face Recognition with Facenet
-    ```
-    python test_facenet.py
-    ```
+ 
 
 - Demo 
     ```
