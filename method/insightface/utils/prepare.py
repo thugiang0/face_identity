@@ -12,6 +12,7 @@ import pdb
 import cv2
 from method.mtcnn_model.utils.align_trans import get_reference_facial_points, warp_and_crop_face
 from method.mtcnn_model.mtcnn import MTCNN
+import os
 
 mtcnn = MTCNN()
 
@@ -89,7 +90,7 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
     
     return embeddings, names
 
-def add_facebank(conf, model, path, tta=True):
+def add_facebank(conf, model, name, path, tta=True):
     embeddings = torch.load(conf.facebank_path/'facebank.pth', map_location="cpu")
     print("emb0: ", embeddings)
     embeddings = [embeddings[i:i + 512] for i in range(0, len(embeddings), 512)]
@@ -120,7 +121,7 @@ def add_facebank(conf, model, path, tta=True):
     embedding = torch.cat(embs).mean(0,keepdim=True)
     embeddings.append(embedding)
     # print(embeddings)
-    names.append(path.name)
+    names.append(name)
     embeddings = torch.cat(embeddings)
     names = np.array(names)
     print("name1", names)

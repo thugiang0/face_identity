@@ -3,13 +3,19 @@ import cv2
 from PIL import Image
 import json
 import numpy as np
+import yaml
 
 from method.insightface.config import get_config
 from method.mtcnn_model.mtcnn import MTCNN
 from method.insightface.Learner import face_learner
 from method.insightface.utils.prepare import load_facebank, draw_box_name, prepare_facebank
 from method.mtcnn_model.utils.align_trans import get_reference_facial_points, warp_and_crop_face
-import yaml
+from method.insightface.utils.prepare import add_facebank
+
+import os
+from pathlib import WindowsPath
+import shutil
+
 
 cfg = get_config(False)
 
@@ -108,6 +114,13 @@ class Recognition:
             # print(face_result)
 
             return face_result, frame
+        
+    def add_face(self, name, img_path):
+        path = f"face_database/facebank/{name}"
+        os.mkdir(path)
+        shutil.copy(img_path, path)
+        path =  WindowsPath(path)
+        add_facebank(cfg, learner.model, name, path, tta=False)
 
 
 

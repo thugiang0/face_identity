@@ -31,11 +31,11 @@ class faceDetectionRecognition:
         :param encode_dir: {str} -> a directory to save or load face encoded data
         :param pretrained: {str} -> 'vggface2' 107Mb or 'casia-webface' 111Mb
     """
-    def __init__(self, person_dir='data_facenet/person', faces_dir='data_facenet/aligned', encode_dir=None, pretrained='vggface2', conf_thresh=config['face_recognition']['facenet']["threshold"]):
+    def __init__(self, person_dir='data_facenet/person', faces_dir='data_facenet/aligned', encode_dir="data_facenet/data.pt", pretrained='vggface2', conf_thresh=config['face_recognition']['facenet']["threshold"]):
         self.person_dir = person_dir
         self.names = os.listdir(self.person_dir)
         self.faces_dir = faces_dir
-        self.encode_dir = config["face_recognition"]["facenet"]["weight_path"]
+        self.encode_dir = encode_dir
 
         self.face_detector = MTCNN(image_size=160, margin=0.1, thresholds=[0.6, 0.7, 0.85], keep_all=True)
         self.face_encoder = InceptionResnetV1(pretrained=pretrained).eval()
@@ -78,7 +78,7 @@ class faceDetectionRecognition:
             except:
                 print('pt file has not valid content')
 
-    def addFaces(self, name):
+    def addFaces(self, name, new_face):
         """
         adding new face encode to encodes
         :param path: {str} -> path of a directory contains new face images
@@ -92,18 +92,19 @@ class faceDetectionRecognition:
         #     src = os.path.join(path, img_name)
         #     dst = os.path.join(self.person_dir, name, img_name)
         #     shutil.copy(src, dst)
-
+        print("add name: ", name)
         encoding_dict = torch.load(self.encode_dir)
+        print("encode 1: ", encoding_dict)
         encodes = []
-        print(glob(f'{self.person_dir}/{name}/*'))
-        for img_path in glob(f'{self.person_dir}/{name}/*'):
+        print("---", glob(new_face))
+        for img_path in os.listdir(new_face):
             save_name = img_path.split('/')[-1]
             encode, img_cropped = self.encoder(img_path, name, save_name)
             encodes.append(encode)
             mean_encode = torch.mean(torch.vstack(encodes), dim=0)
             encoding_dict[name] = mean_encode
         torch.save(encoding_dict, 'data_facenet/data.pt')
-        print(encoding_dict)
+        print("encode 2: ", encoding_dict)
         print(f"The {name}'s face added!")
         # else:
         #     print(f"The {name}'s face exists!")
@@ -144,15 +145,15 @@ class faceDetectionRecognition:
             return names, crops
         
     def recognize_face(self, image):
-        image = cv2.imread(image)
+    
         fdr = faceDetectionRecognition(self.person_dir, self.faces_dir, self.encode_dir)
         encoding_dict = fdr.build_face_storage()
-        # results = fdr.predict(img, encoding_dict)
-        # names = results.display()
+   
         outputs = self.face_detector.detect(image, landmarks=True)
 
-        # recognized_image = results.show()
+        print("outputs: ", outputs)
         results_dict = []
+        print("encode: ", encoding_dict)
         names, crops = self.compare(image, encoding_dict)
         for i, (box, score) in enumerate(zip(outputs[0], outputs[1])):
          
@@ -177,4 +178,30 @@ class faceDetectionRecognition:
             results_dict.append(result)
 
         return results_dict, image
+    
+    
+    def encoder(self, img_path, name, save_name):
+        """
+        encoding one image and save aligned face
+
+        :param img_path: {str}
+        :param name: {str} -> face name
+        :param save_name: {str}
+        :return:
+        """
+        img = Image.open(img_path)
+        img_cropped = self.face_detector(img, save_path=f'{self.faces_dir}/{name}/{save_name}')
+        try:
+            self.face_encoder.classify = True
+            encode = self.face_encoder(img_cropped).detach()
+            return encode, img_cropped
+        except ValueError:
+            print('No Face detected in one of storage Faces; change or remove image from storage')
+
+    def add_face(self, name, img_path):
+        new_face = f'{self.person_dir}/{name}'
+        os.mkdir(new_face)
+        shutil.copy(img_path, new_face)
+        fdr = faceDetectionRecognition(self.person_dir, self.faces_dir, self.encode_dir)
+        fdr.addFaces(name, new_face)
 

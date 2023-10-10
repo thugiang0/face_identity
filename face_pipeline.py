@@ -8,8 +8,7 @@ with open('configs/config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
 class FacePipeline():
-    def __init__(self, method, image):
-        self.image = image
+    def __init__(self, method):
         self.method = method
         if method == "insightface":
             self.recognition = Recognition()
@@ -18,16 +17,10 @@ class FacePipeline():
             self.recognition = faceDetectionRecognition()
         pass
     
-    def recognize(self):
-        return self.recognition.recognize_face(self.image)
+    def recognize(self, image):
+        return self.recognition.recognize_face(image)
+    
+    def add_face(self, name, img_path):
+        return self.recognition.add_face(name, img_path)
 
-
-img = "test/image/friends.jpg"
-image = cv2.imread(img)
-pipeline = FacePipeline(method="insightface", image=image)
-
-result, recognized_image = pipeline.recognize()
-
-cv2.imshow("face recognition", recognized_image)
-cv2.waitKey(0)
 
