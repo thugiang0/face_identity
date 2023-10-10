@@ -38,16 +38,8 @@ class Recognition:
 
     def detect_image(self, image):
         bboxes, scores, landmarks = mtcnn.detect(image, landmarks=True)
-        print("bbox: ", bboxes)
-        return bboxes, scores, landmarks
 
-    # def draw_face_box(self):
-    #     bboxes, scores, faces = mtcnn.detect(image, landmarks=True)
-    #     if bboxes is not None:
-    #         for box in bboxes:
-    #             bbox = list(map(int,box.tolist()))
-    #             image = cv2.rectangle(image,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,255),6)
-    #     return image
+        return bboxes, scores, landmarks
 
     def update_database(self, update):
         if update:
