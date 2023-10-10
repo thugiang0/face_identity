@@ -1,8 +1,8 @@
-from insightface.config import get_config
-from mtcnn_model.mtcnn import MTCNN
-from insightface.Learner import face_learner
+from method.insightface.config import get_config
+from method.mtcnn_model.mtcnn import MTCNN
+from method.insightface.Learner import face_learner
 
-from insightface.utils.prepare import add_facebank
+from method.insightface.utils.prepare import add_facebank
 
 import os
 from pathlib import WindowsPath

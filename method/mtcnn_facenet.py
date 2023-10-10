@@ -1,0 +1,6 @@
+
+
+def recognize(image):
+    
+
+    
