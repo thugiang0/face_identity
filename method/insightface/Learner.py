@@ -14,9 +14,10 @@ from torchvision import transforms as trans
 import math
 import bcolz
 import yaml
+from load_config import load_config
 
-with open('configs/config.yaml', 'r') as file:
-    config = yaml.safe_load(file)
+config_path = "configs/config.yaml"
+config = load_config(config_path)
 
 class face_learner(object):
     def __init__(self, conf, inference=False):

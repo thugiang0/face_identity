@@ -3,9 +3,10 @@ import yaml
 
 from method.mtcnn_insightface import Recognition
 from method.facenet.faceModuleTracker import faceDetectionRecognition
+from load_config import load_config
 
-with open('configs/config.yaml', 'r') as file:
-    config = yaml.safe_load(file)
+config_path = "configs/config.yaml"
+config = load_config(config_path)
 
 class FacePipeline():
     def __init__(self, method):

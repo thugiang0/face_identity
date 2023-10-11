@@ -11,6 +11,7 @@ from method.insightface.Learner import face_learner
 from method.insightface.utils.prepare import load_facebank, draw_box_name, prepare_facebank
 from method.mtcnn_model.utils.align_trans import get_reference_facial_points, warp_and_crop_face
 from method.insightface.utils.prepare import add_facebank
+from load_config import load_config
 
 import os
 from pathlib import WindowsPath
@@ -18,18 +19,15 @@ import shutil
 
 
 cfg = get_config(False)
+config_path = "configs/config.yaml"
+config = load_config(config_path)
 
-with open('configs/config.yaml', 'r') as file:
-    config = yaml.safe_load(file)
-
-
-mtcnn = MTCNN()
-
-learner = face_learner(cfg, True)
 
 class Recognition:
 
-    def __init__(self, learner=learner):
+    def __init__(self):
+        self.mtcnn = MTCNN()
+        learner = face_learner(cfg, True)
         self.learner = learner
         self.learner.threshold = config["face_recognition"]["insightface"]["threshold"]
 
@@ -38,14 +36,14 @@ class Recognition:
         self.learner.model.eval()
 
     def detect_image(self, image):
-        bboxes, scores, landmarks = mtcnn.detect(image, landmarks=True)
+        bboxes, scores, landmarks = self.mtcnn.detect(image, landmarks=True)
 
         return bboxes, scores, landmarks
 
     def update_database(self, update):
         if update:
             print("facebank update")
-            self.targets, self.names = prepare_facebank(cfg, self.learner.model, mtcnn, tta=False)
+            self.targets, self.names = prepare_facebank(cfg, self.learner.model, self.mtcnn, tta=False)
         else:
             print("faceback loaded")
             self.targets, self.names = load_facebank(cfg)
