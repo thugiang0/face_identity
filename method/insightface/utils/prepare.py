@@ -48,7 +48,7 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
     embeddings =  []
     names = ['Unknown']
     for path in conf.facebank_path.iterdir():
-        print("PATH: ", type(path))
+   
         if path.is_file():
             continue
         else:
@@ -83,8 +83,7 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
  
 
     names = np.array(names)
-    print(names)
-    
+
     torch.save(embeddings, conf.facebank_path/'facebank.pth')
     np.save(conf.facebank_path/'names', names)
     
@@ -92,13 +91,12 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
 
 def add_facebank(conf, model, name, path, tta=True):
     embeddings = torch.load(conf.facebank_path/'facebank.pth', map_location="cpu")
-    print("emb0: ", embeddings)
+
     embeddings = [embeddings[i:i + 512] for i in range(0, len(embeddings), 512)]
  
-    
     names = np.load(conf.facebank_path/'names.npy')
     names = names.tolist()
-    print("name 0", names)
+
     embs = []
     for file in path.iterdir():
         if not file.is_file():
@@ -120,11 +118,9 @@ def add_facebank(conf, model, name, path, tta=True):
                     embs.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
     embedding = torch.cat(embs).mean(0,keepdim=True)
     embeddings.append(embedding)
-    # print(embeddings)
     names.append(name)
     embeddings = torch.cat(embeddings)
     names = np.array(names)
-    print("name1", names)
     torch.save(embeddings, conf.facebank_path/'facebank.pth')
     np.save(conf.facebank_path/'names', names)
 

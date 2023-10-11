@@ -7,10 +7,6 @@ from torchvision import transforms as trans
 def get_config(training = True):
     conf = edict()
     conf.data_path = Path('face_database')
-    conf.work_path = Path('work_space/')
-    conf.model_path = conf.work_path/'models'
-    conf.log_path = conf.work_path/'log'
-    conf.save_path = conf.work_path/'save'
     conf.input_size = [112,112]
     conf.embedding_size = 512
     conf.use_mobilfacenet = True

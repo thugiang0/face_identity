@@ -13,6 +13,10 @@ from PIL import Image
 from torchvision import transforms as trans
 import math
 import bcolz
+import yaml
+
+with open('configs/config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
 
 class face_learner(object):
     def __init__(self, conf, inference=False):
@@ -57,33 +61,11 @@ class face_learner(object):
             self.agedb_30, self.cfp_fp, self.lfw, self.agedb_30_issame, self.cfp_fp_issame, self.lfw_issame = get_val_data(self.loader.dataset.root.parent)
         else:
             self.threshold = conf.threshold
-    
-    def save_state(self, conf, accuracy, to_save_folder=False, extra=None, model_only=False):
-        if to_save_folder:
-            save_path = conf.save_path
-        else:
-            save_path = conf.model_path
-        torch.save(
-            self.model.state_dict(), save_path /
-            ('model_{}_accuracy:{}_step:{}_{}.pth'.format(get_time(), accuracy, self.step, extra)))
-        if not model_only:
-            torch.save(
-                self.head.state_dict(), save_path /
-                ('head_{}_accuracy:{}_step:{}_{}.pth'.format(get_time(), accuracy, self.step, extra)))
-            torch.save(
-                self.optimizer.state_dict(), save_path /
-                ('optimizer_{}_accuracy:{}_step:{}_{}.pth'.format(get_time(), accuracy, self.step, extra)))
-    
+
     def load_state(self, conf, fixed_str, from_save_folder=False, model_only=False):
-        if from_save_folder:
-            save_path = conf.save_path
-        else:
-            save_path = conf.model_path            
-        self.model.load_state_dict(torch.load(save_path/'model_{}'.format(fixed_str), map_location="cpu"))
-        if not model_only:
-            self.head.load_state_dict(torch.load(save_path/'head_{}'.format(fixed_str), map_location="cpu"))
-            self.optimizer.load_state_dict(torch.load(save_path/'optimizer_{}'.format(fixed_str), map_location="cpu"))
-        
+        weight_path = config["face_recognition"]["insightface"]["weight_path"]
+        self.model.load_state_dict(torch.load(weight_path, map_location="cpu"))
+
     def board_val(self, db_name, accuracy, best_threshold, roc_curve_tensor):
         self.writer.add_scalar('{}_accuracy'.format(db_name), accuracy, self.step)
         self.writer.add_scalar('{}_best_threshold'.format(db_name), best_threshold, self.step)

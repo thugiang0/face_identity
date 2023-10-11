@@ -19,22 +19,23 @@ import shutil
 
 cfg = get_config(False)
 
-
-mtcnn = MTCNN()
-
-
 with open('configs/config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
+
+mtcnn = MTCNN()
+
 learner = face_learner(cfg, True)
-learner.threshold = config["face_recognition"]["insightface"]["threshold"]
-
-learner.load_state(cfg, 'cpu_final.pth', True, True)
-
-learner.model.eval()
-
 
 class Recognition:
+
+    def __init__(self, learner=learner):
+        self.learner = learner
+        self.learner.threshold = config["face_recognition"]["insightface"]["threshold"]
+
+        self.learner.load_state(cfg, 'cpu_final.pth', True, True)
+
+        self.learner.model.eval()
 
     def detect_image(self, image):
         bboxes, scores, landmarks = mtcnn.detect(image, landmarks=True)
@@ -44,7 +45,7 @@ class Recognition:
     def update_database(self, update):
         if update:
             print("facebank update")
-            self.targets, self.names = prepare_facebank(cfg, learner.model, mtcnn, tta=False)
+            self.targets, self.names = prepare_facebank(cfg, self.learner.model, mtcnn, tta=False)
         else:
             print("faceback loaded")
             self.targets, self.names = load_facebank(cfg)
@@ -77,7 +78,7 @@ class Recognition:
                 warped_face = warp_and_crop_face(np.array(image), facial5points, refrence, crop_size=(112,112))
                 faces.append(Image.fromarray(warped_face))
 
-            results, _ = learner.infer(cfg, faces, self.targets, tta=False)
+            results, _ = self.learner.infer(cfg, faces, self.targets, tta=False)
             
             labels_box = []
 
@@ -112,7 +113,7 @@ class Recognition:
         os.mkdir(path)
         shutil.copy(img_path, path)
         path =  WindowsPath(path)
-        add_facebank(cfg, learner.model, name, path, tta=False)
+        add_facebank(cfg, self.learner.model, name, path, tta=False)
 
 
 

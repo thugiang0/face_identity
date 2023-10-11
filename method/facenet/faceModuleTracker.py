@@ -146,8 +146,8 @@ class faceDetectionRecognition:
         
     def recognize_face(self, image):
     
-        fdr = faceDetectionRecognition(self.person_dir, self.faces_dir, self.encode_dir)
-        encoding_dict = fdr.build_face_storage()
+        # fdr = faceDetectionRecognition(self.person_dir, self.faces_dir, self.encode_dir)
+        encoding_dict = self.build_face_storage()
    
         outputs = self.face_detector.detect(image, landmarks=True)
 
@@ -202,6 +202,7 @@ class faceDetectionRecognition:
         new_face = f'{self.person_dir}/{name}'
         os.mkdir(new_face)
         shutil.copy(img_path, new_face)
-        fdr = faceDetectionRecognition(self.person_dir, self.faces_dir, self.encode_dir)
-        fdr.addFaces(name, new_face)
+        self.addFaces(name, new_face)
+
+    
 
