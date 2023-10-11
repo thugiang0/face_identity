@@ -11,7 +11,7 @@ from method.insightface.Learner import face_learner
 from method.insightface.utils.prepare import load_facebank, draw_box_name, prepare_facebank
 from method.mtcnn_model.utils.align_trans import get_reference_facial_points, warp_and_crop_face
 from method.insightface.utils.prepare import add_facebank
-from load_config import load_config
+from utils.load_config import load_config
 
 import os
 from pathlib import WindowsPath

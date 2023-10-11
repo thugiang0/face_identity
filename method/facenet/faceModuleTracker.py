@@ -11,7 +11,7 @@ from .detection import Detections
 from method.mtcnn_model.mtcnn import MTCNN
 from .inception_resnet_v1 import InceptionResnetV1
 import yaml
-from load_config import load_config
+from utils.load_config import load_config
 
 config_path = "configs/config.yaml"
 config = load_config(config_path)

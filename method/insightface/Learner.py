@@ -14,7 +14,7 @@ from torchvision import transforms as trans
 import math
 import bcolz
 import yaml
-from load_config import load_config
+from utils.load_config import load_config
 
 config_path = "configs/config.yaml"
 config = load_config(config_path)

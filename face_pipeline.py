@@ -3,7 +3,7 @@ import yaml
 
 from method.mtcnn_insightface import Recognition
 from method.facenet.faceModuleTracker import faceDetectionRecognition
-from load_config import load_config
+from utils.load_config import load_config
 
 config_path = "configs/config.yaml"
 config = load_config(config_path)
