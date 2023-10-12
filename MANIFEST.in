@@ -1,0 +1,4 @@
+include face_recognition/configs/config.yaml
+include face_recognition/data_facenet/data.pt
+include face_recognition/face_database/facebank/*
+include face_recognition/method/mtcnn_model/weights/*

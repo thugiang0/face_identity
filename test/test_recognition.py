@@ -1,11 +1,13 @@
-from face_pipeline import FacePipeline
+from face_recognition.face_pipeline import FacePipeline
 import cv2
 
-img = "test/image/friends.jpg"
-image = cv2.imread(img)
-pipeline = FacePipeline(method="insightface")
+if __name__ == '__main__':
 
-result, recognized_image = pipeline.recognize(image)
+    img = "test/image/friends.jpg"
+    image = cv2.imread(img)
+    pipeline = FacePipeline(method="insightface")
 
-cv2.imshow("face recognition", recognized_image)
-cv2.waitKey(0)
+    result, recognized_image = pipeline.recognize(image)
+
+    cv2.imshow("face recognition", recognized_image)
+    cv2.waitKey(0)

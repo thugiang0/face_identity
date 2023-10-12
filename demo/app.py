@@ -2,13 +2,13 @@ import streamlit as st
 import cv2
 import numpy as np
 from PIL import Image
-from insightface.recognize import draw_face_box, update_database, recognize_face
 import os
-from update import add_to_database
 import json
+from face_recognition.face_pipeline import FacePipeline
 
 
-default_img = "default.jpg"
+
+default_img = "demo/default.jpg"
 
 st.title("Face Recognition")
 
@@ -33,18 +33,22 @@ st.sidebar.image(image_add)
 
 name_person = st.sidebar.text_input("Input name")
 
+pipeline = FacePipeline(method="insightface")
+
 if st.sidebar.button("Update"):
     if img_file_add is not None and name_person:
         
-        save_folder = os.path.join("face_database/facebank/", name_person)
-        if name_person not in os.listdir("face_database/facebank/"):
+        save_folder = os.path.join("face_recognition/face_database/facebank/", name_person)
+        if name_person not in os.listdir("face_recognition/face_database/facebank/"):
             os.makedirs(save_folder, exist_ok=True)
 
             image_path = os.path.join(save_folder, img_file_add.name)
             
             with open(image_path, "wb") as f:
                 f.write(img_file_add.getbuffer())
-            add_to_database(save_folder)
+
+            pipeline.add_face(name=name_person, img_path=image_path)
+
             st.sidebar.success(f"Image saved to {image_path}")
         else:
             st.sidebar.warning(f"{name_person} already exists")
@@ -71,10 +75,8 @@ st.sidebar.image(image)
 st.subheader("output image")
 
 
-targets, names = update_database(False)
-
-result, image_result = recognize_face(image, targets, names)
-
+pipeline = FacePipeline(method="insightface")
+result, image_result = pipeline.recognize(image)
 
 st.image(image_result)
 
@@ -103,7 +105,7 @@ if img_file_buffer is not None:
                 if st.button("Add", key=f"button_{index}"):
                     if name_input:
                         
-                        save_folder = os.path.join("face_database/facebank/", name_input)
+                        save_folder = os.path.join("face_recognition/face_database/facebank/", name_input)
                         if name_input not in os.listdir("face_database/facebank/"):
                             os.makedirs(save_folder, exist_ok=True)
 

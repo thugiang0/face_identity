@@ -1,3 +1,13 @@
+Metadata-Version: 2.1
+Name: face-recognition
+Version: 0.0.1
+Summary: A sample test package
+Author: giangtt
+License: MIT
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # Face Identity
 
 ## Detection
@@ -19,25 +29,15 @@
     ```
 
 - Test
-    - Recognize
+
     ```
-    python test/test_recognition.py
+    python main_test.py
     ```
 
-    - Add face to face database
-    ```
-    python test/test_add.py
-    ```
-
-- FastAPI
-    ```
-    uvicorn main:app --reload
-    ```
+ 
 
 - Demo 
     ```
-    streamlit run demo/app.py
+    streamlit run app.py
     ```
-
-
     
