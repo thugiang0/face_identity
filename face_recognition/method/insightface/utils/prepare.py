@@ -89,7 +89,7 @@ def prepare_facebank(conf, model, mtcnn, tta = True):
     
     return embeddings, names
 
-def add_facebank(conf, model, name, path, tta=True):
+def add_facebank(conf, model, name, img_path, tta=True):
     embeddings = torch.load(conf.facebank_path/'facebank.pth', map_location="cpu")
 
     embeddings = [embeddings[i:i + 512] for i in range(0, len(embeddings), 512)]
@@ -98,25 +98,25 @@ def add_facebank(conf, model, name, path, tta=True):
     names = names.tolist()
 
     embs = []
-    for file in path.iterdir():
+    # for file in path.iterdir():
        
-        if not file.is_file():
-            continue
-        else:
-            try:
-                img = Image.open(file)
-            except:
-                continue
-            if img.size != (112, 112):
-                img = align(img)
-            with torch.no_grad():
-                if tta:
-                    mirror = trans.functional.hflip(img)
-                    emb = model(conf.test_transform(img).to(conf.device).unsqueeze(0))
-                    emb_mirror = model(conf.test_transform(mirror).to(conf.device).unsqueeze(0))
-                    embs.append(l2_norm(emb + emb_mirror))
-                else:                        
-                    embs.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
+    #     if not file.is_file():
+    #         continue
+    #     else:
+    # try:
+    img = Image.open(img_path)
+    # except:
+    #     continue
+    if img.size != (112, 112):
+        img = align(img)
+    with torch.no_grad():
+        if tta:
+            mirror = trans.functional.hflip(img)
+            emb = model(conf.test_transform(img).to(conf.device).unsqueeze(0))
+            emb_mirror = model(conf.test_transform(mirror).to(conf.device).unsqueeze(0))
+            embs.append(l2_norm(emb + emb_mirror))
+        else:                        
+            embs.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
     embedding = torch.cat(embs).mean(0,keepdim=True)
     embeddings.append(embedding)
     names.append(name)

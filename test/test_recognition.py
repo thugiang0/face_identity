@@ -3,7 +3,7 @@ import cv2
 
 if __name__ == '__main__':
 
-    img = "test/image/friends.jpg"
+    img = "test/image/blackpink.jpg"
     image = cv2.imread(img)
     pipeline = FacePipeline(method="insightface")
 

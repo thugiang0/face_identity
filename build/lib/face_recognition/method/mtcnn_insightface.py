@@ -110,11 +110,12 @@ class Recognition:
             return face_result, frame
         
     def add_face(self, name, img_path):
-        path = os.path.join(os.path.dirname(__file__), f"../face_database/facebank/{name}")
-        os.mkdir(path)
-        shutil.copy(img_path, path)
-        path =  WindowsPath(path)
-        add_facebank(cfg, self.learner.model, name, path, tta=False)
+        # path = os.path.join(os.path.dirname(os.path.dirname(__file__)), f"face_database/facebank/{name}")
+
+        # os.mkdir(path)
+        # shutil.copy(img_path, path)
+        # path =  WindowsPath(path)
+        add_facebank(cfg, self.learner.model, name, img_path, tta=False)
 
 
 

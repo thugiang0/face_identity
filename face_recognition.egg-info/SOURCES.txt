@@ -9,6 +9,7 @@ face_recognition/face_pipeline.py
 face_recognition.egg-info/PKG-INFO
 face_recognition.egg-info/SOURCES.txt
 face_recognition.egg-info/dependency_links.txt
+face_recognition.egg-info/requires.txt
 face_recognition.egg-info/top_level.txt
 face_recognition/configs/__init__.py
 face_recognition/configs/config.yaml
@@ -45,6 +46,4 @@ face_recognition/method/mtcnn_model/weights/pnet.pt
 face_recognition/method/mtcnn_model/weights/rnet.pt
 face_recognition/utils/__init__.py
 face_recognition/utils/load_config.py
-test/test_add.py
-test/test_lib.py
-test/test_recognition.py
+face_recognition/weights/insightface/model_cpu_final.pth

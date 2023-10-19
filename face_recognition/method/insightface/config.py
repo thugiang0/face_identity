@@ -3,10 +3,12 @@ from pathlib import Path
 import torch
 from torch.nn import CrossEntropyLoss
 from torchvision import transforms as trans
+import os
 
 def get_config(training = True):
     conf = edict()
-    conf.data_path = Path('face_recognition/face_database')
+    # conf.data_path = Path('face_recognition/face_database')
+    conf.data_path = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "face_database"))
     conf.input_size = [112,112]
     conf.embedding_size = 512
     conf.use_mobilfacenet = True

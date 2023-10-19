@@ -7,8 +7,8 @@ face_recognition:
   method: facenet
   insightface:
     threshold: 1.1066
-    weight_path: "face_recognition/weights/insightface/model_cpu_final.pth"
+    weight_path: "weights/insightface/model_cpu_final.pth"
   facenet:
     threshold: 161.8
-    weight_path: "face_recognition/weights/facenet/vgg2.pt"
+    weight_path: "weights/facenet/vgg2.pt"
 

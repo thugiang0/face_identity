@@ -1,13 +1,19 @@
-torch
-numpy==1.14.5
-matplotlib
-tqdm
-scipy==1.0.0
-bcolz==1.2.1
-easydict
-opencv_python
-Pillow
-scikit_learn==0.19.2
-tensorboardX==1.2
-torchvision==0.2.1
+numpy==1.21.6
+matplotlib==3.5.3
+tqdm==4.66.1
+scipy==1.7.3
+# cython
+# zipline
+#bcolz
+bcolz-zipline
+easydict==1.10
+opencv_python==4.8.1.78
+Pillow==9.3.0
+#scikit_learn==0.19.2
+scikit_learn==1.1.0
+torch==1.13.1
+torchvision==0.14.1
+tensorboardX==2.2
 streamlit==1.23.1
+PyYAML
+protobuf==3.20.0

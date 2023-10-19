@@ -19,10 +19,15 @@ class FacePipeline():
             targets, names = self.recognition.update_database(update=False)
         elif method == "facenet":
             self.recognition = faceDetectionRecognition()
+
         pass
       
     def recognize(self, image):
-        return self.recognition.recognize_face(image)
+        try:
+            return self.recognition.recognize_face(image)
+        except AttributeError:
+            print("The selected method does not support face recognition.")
+            return None, image
     
     def add_face(self, name, img_path):
         return self.recognition.add_face(name, img_path)

@@ -4,7 +4,7 @@ Version: 0.0.1
 Summary: A sample test package
 Author: giangtt
 License: MIT
-Requires-Python: >=3.7
+Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
@@ -29,15 +29,25 @@ License-File: LICENSE
     ```
 
 - Test
-
+    - Recognize
     ```
-    python main_test.py
+    python test/test_recognition.py
     ```
 
- 
+    - Add face to face database
+    ```
+    python test/test_add.py
+    ```
+
+- FastAPI
+    ```
+    uvicorn main:app --reload
+    ```
 
 - Demo 
     ```
-    streamlit run app.py
+    streamlit run demo/app.py
     ```
+
+
     

@@ -2,3 +2,5 @@ include face_recognition/configs/config.yaml
 include face_recognition/data_facenet/data.pt
 include face_recognition/face_database/facebank/*
 include face_recognition/method/mtcnn_model/weights/*
+include face_recognition/weights/insightface/model_cpu_final.pth
+include face_recognition/data_facenet/person/

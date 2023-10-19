@@ -16,7 +16,7 @@ from ...utils.load_config import load_config
 
 current_dir = os.path.dirname(__file__)
 
-config_path = os.path.join(current_dir, "../../configs/config.yaml")
+config_path = os.path.join(os.path.dirname(os.path.dirname(current_dir)), "configs/config.yaml")
 config = load_config(config_path)
 
 
@@ -36,10 +36,10 @@ class faceDetectionRecognition:
         :param pretrained: {str} -> 'vggface2' 107Mb or 'casia-webface' 111Mb
     """
     def __init__(self, pretrained='vggface2', conf_thresh=config['face_recognition']['facenet']["threshold"]):
-        self.person_dir = os.path.join(os.path.dirname(__file__), '../../data_facenet/person')
-        self.names = os.listdir(self.person_dir)
-        self.faces_dir = os.path.join(os.path.dirname(__file__), '../../data_facenet/aligned')
-        self.encode_dir = os.path.join(os.path.dirname(__file__), "../../data_facenet/data.pt")
+        # self.person_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data_facenet/person')
+        # self.names = os.listdir(self.person_dir)
+        self.faces_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data_facenet/aligned')
+        self.encode_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data_facenet/data.pt")
 
         self.face_detector = MTCNN(image_size=160, margin=0.1, thresholds=[0.6, 0.7, 0.85], keep_all=True)
         self.face_encoder = InceptionResnetV1(pretrained=pretrained).eval()
@@ -53,6 +53,7 @@ class faceDetectionRecognition:
         a dictionary of person names and mean encode of each person {person_name:encode}
         """
         if self.encode_dir is None:
+            print("person_dir ", self.person_dir)
             encoding_dict = {}
             for name in os.listdir(self.person_dir):
                 encodes = []
@@ -82,7 +83,7 @@ class faceDetectionRecognition:
             except:
                 print('pt file has not valid content')
 
-    def addFaces(self, name, new_face):
+    def addFaces(self, name, img_path):
         """
         adding new face encode to encodes
         :param path: {str} -> path of a directory contains new face images
@@ -99,14 +100,16 @@ class faceDetectionRecognition:
         print("add name: ", name)
         encoding_dict = torch.load(self.encode_dir)
         encodes = []
-        for img_path in os.listdir(new_face):
-            img_path = os.path.join(new_face, img_path)
-            save_name = img_path.split('/')[-1]
-            encode, img_cropped = self.encoder(img_path, name, save_name)
-            encodes.append(encode)
-            mean_encode = torch.mean(torch.vstack(encodes), dim=0)
-            encoding_dict[name] = mean_encode
+        # print(new_face)
+        # for img_path in os.listdir(new_face):
+            # img_path = os.path.join(new_face, img_path)
+        save_name = img_path.split('/')[-1]
+        encode, img_cropped = self.encoder(img_path, name, save_name)
+        encodes.append(encode)
+        mean_encode = torch.mean(torch.vstack(encodes), dim=0)
+        encoding_dict[name] = mean_encode
         torch.save(encoding_dict, self.encode_dir)
+        print("save name: ", save_name)
         print(f"The {name}'s face added!")
         # else:
         #     print(f"The {name}'s face exists!")
@@ -130,6 +133,7 @@ class faceDetectionRecognition:
             self.face_encoder.classify = True
             encodes = self.face_encoder(crops).detach()
             names = []
+            
             for i in range(len(encodes)):
                 encode = encodes[i]
                 distances = {}
@@ -197,10 +201,10 @@ class faceDetectionRecognition:
             print('No Face detected in one of storage Faces; change or remove image from storage')
 
     def add_face(self, name, img_path):
-        new_face = f'{self.person_dir}/{name}'
-        os.mkdir(new_face)
-        shutil.copy(img_path, new_face)
-        self.addFaces(name, new_face)
+        # new_face = f'{self.person_dir}/{name}'
+        # # os.mkdir(new_face)
+        # # shutil.copy(img_path, new_face)
+        self.addFaces(name, img_path)
 
     
 

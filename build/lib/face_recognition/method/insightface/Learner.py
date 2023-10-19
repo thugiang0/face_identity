@@ -12,12 +12,13 @@ from .utils.prepare import get_time, gen_plot, hflip_batch, separate_bn_paras
 from PIL import Image
 from torchvision import transforms as trans
 import math
-import bcolz
+# import bcolz
 import yaml
 import os
 from ...utils.load_config import load_config
 
 current_dir = os.path.dirname(__file__)
+current_dir2 = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 config_path = os.path.join(current_dir, "../../configs/config.yaml")
 config = load_config(config_path)
@@ -67,8 +68,9 @@ class face_learner(object):
             self.threshold = conf.threshold
 
     def load_state(self, conf, fixed_str, from_save_folder=False, model_only=False):
-        weight_path = config["face_recognition"]["insightface"]["weight_path"]
-        self.model.load_state_dict(torch.load(weight_path, map_location="cpu"))
+        weight_path = os.path.join(current_dir2, config["face_recognition"]["insightface"]["weight_path"])
+        self.model.load_state_dict(torch.load(os.path.abspath(weight_path), map_location="cpu"))
+        
 
     def board_val(self, db_name, accuracy, best_threshold, roc_curve_tensor):
         self.writer.add_scalar('{}_accuracy'.format(db_name), accuracy, self.step)
