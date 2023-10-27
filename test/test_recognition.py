@@ -8,6 +8,7 @@ if __name__ == '__main__':
     pipeline = FacePipeline(method="insightface")
 
     result, recognized_image = pipeline.recognize(image)
+    print(result)
 
-    cv2.imshow("face recognition", recognized_image)
-    cv2.waitKey(0)
+    # cv2.imshow("face recognition", recognized_image)
+    # cv2.waitKey(0)

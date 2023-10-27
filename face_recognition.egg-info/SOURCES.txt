@@ -47,3 +47,4 @@ face_recognition/method/mtcnn_model/weights/rnet.pt
 face_recognition/utils/__init__.py
 face_recognition/utils/load_config.py
 face_recognition/weights/insightface/model_cpu_final.pth
+test/test_add.py

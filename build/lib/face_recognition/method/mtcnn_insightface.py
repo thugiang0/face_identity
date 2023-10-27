@@ -91,7 +91,7 @@ class Recognition:
                 face = frame[bbox[1]:bbox[3], bbox[0]:bbox[2]]
         
                 face_id = {
-                    "face": face.tolist(),
+                    # "face": face.tolist(),
                     "bbox": bbox,
                     "score": score,
                     "name": name_id
