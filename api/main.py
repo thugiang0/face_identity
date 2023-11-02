@@ -46,3 +46,10 @@ async def update_data(file: UploadFile, name: str = Form(...)):
     return {
         "status": "updated"
         }
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+

@@ -1,0 +1,6 @@
+version: '3'
+services:
+  fast_api:
+    image: giangtt/fast_api_1
+    ports:
+      - "8000:8000" 

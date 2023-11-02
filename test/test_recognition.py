@@ -1,5 +1,6 @@
 from face_recognition.face_pipeline import FacePipeline
 import cv2
+import torch
 
 if __name__ == '__main__':
 
@@ -8,6 +9,8 @@ if __name__ == '__main__':
     pipeline = FacePipeline(method="insightface")
 
     result, recognized_image = pipeline.recognize(image)
+    print(result)
+    cv2.imwrite("img.jpg", recognized_image)
 
-    cv2.imshow("face recognition", recognized_image)
-    cv2.waitKey(0)
+    # cv2.imshow("face recognition", recognized_image)
+    # cv2.waitKey(0)

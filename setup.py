@@ -29,7 +29,7 @@ setuptools.setup(
     version="0.0.1", 
     author="giangtt", 
     # packages=["face_recognition"],
-    packages=setuptools.find_packages(), 
+    packages=setuptools.find_packages(),  
     description="A sample test package", 
     long_description=description, 
     long_description_content_type="text/markdown", 

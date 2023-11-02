@@ -19,10 +19,14 @@ learner = face_learner(cfg, True)
 
 learner.threshold = 1.1066
 
+print("---", cfg.device.type == 'cpu')
+
+# learner.load_state(cfg, 'cpu_final.pth', True, True)
 if cfg.device.type == 'cpu':
     learner.load_state(cfg, 'cpu_final.pth', True, True)
 else:
     learner.load_state(cfg, 'final.pth', True, True)
+
     
 learner.model.eval()
 

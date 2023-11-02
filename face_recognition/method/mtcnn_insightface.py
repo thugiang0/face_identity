@@ -35,7 +35,6 @@ class Recognition:
         self.learner.threshold = config["face_recognition"]["insightface"]["threshold"]
 
         self.learner.load_state(cfg, 'cpu_final.pth', True, True)
-
         self.learner.model.eval()
 
     def detect_image(self, image):
@@ -48,7 +47,7 @@ class Recognition:
             print("facebank update")
             self.targets, self.names = prepare_facebank(cfg, self.learner.model, self.mtcnn, tta=False)
         else:
-            print("faceback loaded")
+            print("facebank loaded")
             self.targets, self.names = load_facebank(cfg)
 
         return self.targets, self.names
@@ -91,7 +90,7 @@ class Recognition:
                 face = frame[bbox[1]:bbox[3], bbox[0]:bbox[2]]
         
                 face_id = {
-                    "face": face.tolist(),
+                    # "face": face.tolist(),
                     "bbox": bbox,
                     "score": score,
                     "name": name_id
